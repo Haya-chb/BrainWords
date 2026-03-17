@@ -13,41 +13,36 @@ import "../styles/game.css";
 import alphabet from "../data/alphabet.json";
 
 
-
-
 export default function Game() {
 
- 
   const [locale, setLocale] = useState("fr-FR");
   const [word, setWord] = useState("");
   const [displayedWord, setDisplayedWord] = useState("");
   const [usedLetters, setUsedLetters] = useState([]);
   const [score, setScore] = useState(0);
   const [error, setError] = useState("");
-  const [distance, setDistance] = useState(10); 
+  const [distance, setDistance] = useState(10);
 
-  // get language from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userData = JSON.parse(localStorage.getItem("userData"));
-
       if (userData?.locale) {
         setLocale(userData.locale);
       }
     }
   }, []);
 
-  // choose alphabet depending on language
   const alphabetLetters =
     locale === "fr-FR"
       ? alphabet["français"]
       : alphabet["english"];
 
+  function endGame() {
+    localStorage.setItem("currentScore", score);
+    window.location.href = "/end";
+  }
 
-
-  // fetch a word from API
   function fetchWord() {
-
     fetch("http://localhost:3333", {
       method: "POST",
       headers: {
@@ -57,10 +52,8 @@ export default function Game() {
     })
       .then((res) => res.json())
       .then((data) => {
-
         const cleanWord = data.word.trim().toLowerCase();
 
-        // show "_" but keep "-" visible
         const initialDisplay = cleanWord
           .split("")
           .map((char) => (char === "-" ? "-" : "_"))
@@ -69,147 +62,128 @@ export default function Game() {
         setWord(cleanWord);
         setDisplayedWord(initialDisplay);
         setUsedLetters([]);
-
       });
   }
 
-  // load first word
   useEffect(() => {
     fetchWord();
   }, [locale]);
 
-  // reveal letter logic
   function revealLetter(letter) {
-
     let newWord = "";
     let found = false;
 
     for (let i = 0; i < word.length; i++) {
-
       if (word[i] === letter) {
         newWord += letter;
         found = true;
       } else {
         newWord += displayedWord[i];
       }
-
     }
 
     setDisplayedWord(newWord);
 
     if (found) {
-
-      // good letter 
       setScore((prev) => prev + 2);
       setDistance((prev) => Math.min(prev + 1, 10));
 
-      // word completed
       if (!newWord.includes("_")) {
         setScore((prev) => prev + 10);
-        fetchWord(); // new word
+        fetchWord();
       }
 
     } else {
-
-      // wrong letter 
       setScore((prev) => prev - 2);
 
-      setDistance((prev) => {
-        const newDistance = prev - 3;
+      setDistance((prevDistance) => {
+        const newDistance = prevDistance - 3;
 
-        // if zombie reaches player → game over
         if (newDistance <= 0) {
-          window.location.href = "/end";
+          endGame();
         }
 
         return newDistance;
       });
-
     }
   }
 
-  // the page 
   return (
-    <> 
+    <>
+      <div className="game">
+        
+        <nav className="nav">
+          <NavLink to="/">Home</NavLink>
+        </nav>
 
-    <div className="game">
-      
-      <nav className="nav">
-        <NavLink to="/">Home</NavLink>
-      </nav>
+        <main>
 
-     <main>
+          <CharacterLayer distance={distance} />
 
-        <CharacterLayer distance={distance} />
+          <div className="gameUI">
 
-        <div className="gameUI">
-    
+            <Score score={score} />
 
-        <Score score={score} />
+            {error && <p className="error">{error}</p>}
 
-        {error && <p className="error">{error}</p>}
+            <Word displayedWord={displayedWord} />
 
-        <Word displayedWord={displayedWord} />
+            <GuessWord
+              onGuess={(guess) => {
 
-      
+                if (guess === word) {
+                  setScore((prev) => prev + 10);
+                  setDistance((prev) => Math.min(prev + 2, 10));
+                  fetchWord();
+                  setError("");
 
-       <GuessWord
-  onGuess={(guess) => {
+                } else {
+                  setScore((prev) => prev - 5);
 
-    if (guess === word) {
-      // correct word
-      setScore((prev) => prev + 10);
-      setDistance((prev) => Math.min(prev + 2, 10));
-      fetchWord();
-      setError("");
+                  setDistance((prevDistance) => {
+                    const newDistance = prevDistance - 2;
 
-    } else {
-      // wrong word
-      setScore((prev) => prev - 5);
-      setDistance((prev) => {
-        const newDistance = prev - 2;
+                    if (newDistance <= 0) {
+                      endGame();
+                    }
 
-        if (newDistance <= 0) {
-          localStorage.setItem("currentScore", score);
-          window.location.href = "/end";
-        }
+                    return newDistance;
+                  });
 
-        return newDistance;
-      });
+                  setError("Wrong word");
+                }
 
-      setError("Wrong word");
-    }
+              }}
+            />
 
-  }}
-/>
+            <UsedLetters usedLetters={usedLetters} />
 
-        <UsedLetters usedLetters={usedLetters} />
+            <LetterInput
+              onLetterSubmit={(letter) => {
+                const lower = letter.toLowerCase();
 
-      <LetterInput
-      onLetterSubmit={(letter) => {
-        const lower = letter.toLowerCase();
+                setError("");
 
-        setError("");
+                if (!alphabetLetters.includes(lower)) {
+                  setError("Invalid letter for this language");
+                  return;
+                }
 
-        if (!alphabetLetters.includes(lower)) {
-          setError("Invalid letter for this language");
-          return;
-        }
+                if (usedLetters.includes(lower)) {
+                  setError("Letter already used");
+                  return;
+                }
 
-        if (usedLetters.includes(lower)) {
-          setError("Letter already used");
-          return;
-        }
+                setUsedLetters([...usedLetters, lower]);
+                revealLetter(lower);
+              }}
+            />
 
-        setUsedLetters([...usedLetters, lower]);
-        revealLetter(lower);
-      }}
-    />
-  </div>
+          </div>
 
-    </main>
+        </main>
 
- </div>
+      </div>
     </>
   );
 }
