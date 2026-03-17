@@ -1,25 +1,34 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-export const GameStartForm = () => {
-  const [name, setName] = useState('');
+export function GameStartForm() {
 
-  const handleSubmit = (e) => {
+  const [locale, setLocale] = useState("fr-FR");
+
+  function handleSubmit(e) {
     e.preventDefault();
 
-    const userData = {
-      name: name,
-    };
+    localStorage.setItem("userData", JSON.stringify({ locale }));
 
-    localStorage.setItem('userData', JSON.stringify(userData));
-    window.location.href = '/game';
-  };
+    window.location.href = "/game";
+  }
 
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="pseudo">Pseudo</label>
-      <input type="text" id="pseudo" value={name} onChange={e => setName(e.target.value)} />
 
-      <input type="submit" value="Jouer" />
+      <label>Language</label>
+
+      <select
+        value={locale}
+        onChange={(e) => setLocale(e.target.value)}
+      >
+        <option value="fr-FR">Français</option>
+        <option value="en-US">English</option>
+      </select>
+
+      <button type="submit">
+        Start Game
+      </button>
+
     </form>
   );
-};
+}

@@ -9,15 +9,18 @@ export const LetterInput = ({ onLetterSubmit }) => {
   setText("");
 }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleChange(e) {
+    setText(e.target.value);
   }
 
   return (
     <>
     <form onSubmit={handleSubmit}>
       <label>Entrer une lettre</label>
-      <input value={text} onChange={handleChange} />
+      <input value={text} 
+      onChange={handleChange}
+      maxLength={1} />
+
       <input type="submit" value="Valider" />
       </form>
     </>

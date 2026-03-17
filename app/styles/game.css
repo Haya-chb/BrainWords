@@ -1,0 +1,132 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+
+
+.game {
+  position: relative;
+  height: 100vh;
+
+  background-image: url("/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  overflow: hidden;
+}
+
+
+.nav {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  display: flex;
+  gap: 20px;
+  z-index: 20;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.word,
+.error {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 15px;
+  border-radius: 8px;
+
+  backdrop-filter: blur(4px);
+}
+
+
+.gameUI {
+  position: relative;
+  z-index: 10;
+
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 20px;
+  color: white;
+}
+
+
+.gameUI span {
+  font-size: 2rem;
+  letter-spacing: 10px;
+}
+
+
+input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid white;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  outline: none;
+}
+
+input:focus {
+  border-color: #00ffcc;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+input::placeholder {
+  color: #ccc;
+}
+
+
+button {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: #222;
+  color: white;
+  transition: 0.2s;
+}
+
+button:hover {
+  background-color: #444;
+}
+
+/* ERROR */
+.error {
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}
+
+
+.usedLetters span {
+  padding: 6px 10px;
+  border-radius: 6px;
+
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  font-size: 0.9rem;
+  color: #eee;
+
+  backdrop-filter: blur(4px);
+
+  transition: 0.2s;
+}
+
+.usedLetters span:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+

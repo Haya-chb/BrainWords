@@ -1,0 +1,12 @@
+.zombie {
+  width: 384px; 
+  height: 384px;
+
+  background-image: url("/Zombie.png");
+  background-repeat: no-repeat;
+
+  background-size: 1536px 384px; 
+
+  transform: scaleX(-1);
+  image-rendering: pixelated;
+}

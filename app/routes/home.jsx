@@ -1,5 +1,6 @@
 import { NavLink } from "react-router";
 import { GameStartForm } from "../components/GameStartForm";
+import "../styles/home.css";
 
 // export function meta() {
 //   return [
@@ -15,9 +16,6 @@ export function Nav() {
     <nav>
       <NavLink to="/" end>
         Home
-      </NavLink>
-      <NavLink to="/score" end>
-        Scores
       </NavLink>
     </nav>
   );

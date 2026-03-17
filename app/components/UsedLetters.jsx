@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Letter } from "./Letter";
-import alphabet from "../data/alphabet.json";
+
 
 export const UsedLetters = ({ usedLetters }) => {
-
   return (
-    <section>
-      {usedLetters.map((letter) => (
-        <Letter key={letter} letter={letter} />
+    <div className="usedLetters">
+      {usedLetters.map((letter, index) => (
+        <span key={index}>{letter}</span>
       ))}
-    </section>
+    </div>
   );
 };
 
